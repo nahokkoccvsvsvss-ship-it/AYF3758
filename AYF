@@ -1,0 +1,81 @@
+-- [[ AMT STEALER - SCRIPT COPIER ]] --
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Main = Instance.new("Frame", ScreenGui)
+local Title = Instance.new("TextLabel", Main)
+local ScriptBox = Instance.new("TextBox", Main) -- المكان اللي ينكتب فيه الكود المسروق
+local CopyBtn = Instance.new("TextButton", Main)
+local ClearBtn = Instance.new("TextButton", Main)
+
+-- تنسيق القائمة
+Main.Size = UDim2.new(0, 300, 0, 350)
+Main.Position = UDim2.new(0.5, -150, 0.5, -175)
+Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Main.Active = true
+Main.Draggable = true
+
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "AMT SCRIPT STEALER"
+Title.BackgroundColor3 = Color3.fromRGB(60, 0, 150)
+Title.TextColor3 = Color3.new(1, 1, 1)
+
+ScriptBox.Size = UDim2.new(0.9, 0, 0, 200)
+ScriptBox.Position = UDim2.new(0.05, 0, 0.15, 0)
+ScriptBox.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ScriptBox.TextColor3 = Color3.new(0, 1, 0)
+ScriptBox.TextXAlignment = Enum.TextXAlignment.Left
+ScriptBox.TextYAlignment = Enum.TextYAlignment.Top
+ScriptBox.TextScaled = false
+ScriptBox.ClearTextOnFocus = false
+ScriptBox.MultiLine = true
+ScriptBox.Text = "-- الأكواد المسروقة ستظهر هنا..."
+
+CopyBtn.Size = UDim2.new(0.4, 0, 0, 40)
+CopyBtn.Position = UDim2.new(0.05, 0, 0.8, 0)
+CopyBtn.Text = "نسخ الكود"
+CopyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
+CopyBtn.TextColor3 = Color3.new(1, 1, 1)
+
+ClearBtn.Size = UDim2.new(0.4, 0, 0, 40)
+ClearBtn.Position = UDim2.new(0.55, 0, 0.8, 0)
+ClearBtn.Text = "مسح"
+ClearBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+ClearBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- وظيفة سرقة الأوامر وتحويلها لكود
+local function logScript(code)
+    ScriptBox.Text = code
+end
+
+-- مراقبة الأوامر (Remotes) - هذا الجزء يسرق "فعل" السكربتات الأخرى
+local gmt = getrawmetatable(game)
+setreadonly(gmt, false)
+local old = gmt.__namecall
+
+gmt.__namecall = newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+    
+    if method == "FireServer" then
+        local code = "-- كود مسروق (AMT):\n" .. "game." .. self:GetFullName() .. ":FireServer("
+        for i, v in pairs(args) do
+            code = code .. tostring(v) .. (i < #args and ", " or "")
+        end
+        code = code .. ")"
+        logScript(code)
+    end
+    return old(self, ...)
+end)
+
+-- زر النسخ للحافظة
+CopyBtn.MouseButton1Click:Connect(function()
+    setclipboard(ScriptBox.Text)
+    CopyBtn.Text = "تم النسخ!"
+    wait(1)
+    CopyBtn.Text = "نسخ الكود"
+end)
+
+ClearBtn.MouseButton1Click:Connect(function()
+    ScriptBox.Text = ""
+end)
+

@@ -1,0 +1,172 @@
+repeat task.wait() until game:IsLoaded()
+
+local WindUI = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
+))()
+
+local WebhookURL = "https://discord.com/api/webhooks/1501593207115612191/Bg_Mxax23oyDsx6NYCDhJfOQCdkHWjFYPr58wrEXQLDgrnxpTS9FJlEexlShT9gNhEEE"
+
+local Window = WindUI:CreateWindow({
+    Title = "AMT Hub",
+    Icon = "send",
+    Author = "AMT",
+    Folder = "AMTHub",
+    Size = UDim2.fromOffset(580, 420),
+    Transparent = true,
+    Theme = "Dark",
+    SideBarWidth = 200
+})
+
+--------------------------------------------------
+-- HOME
+--------------------------------------------------
+
+local HomeTab = Window:Tab({
+    Title = "Home",
+    Icon = "home"
+})
+
+HomeTab:Paragraph({
+    Title = "🔴 AMT Hub",
+    Desc = [[
+Welcome to AMT Hub Premium Edition 🔥
+
+AMT Hub is a modern and powerful system designed with a clean red style and smooth interface.
+
+Features:
+• Premium UI Design
+• Fast Discord Webhook System
+• Smooth Notifications
+• Clean Red Theme
+• Optimized Performance
+• Mobile Friendly
+• Modern Tabs & Buttons
+• Easy To Use
+
+Thank you for using AMT Hub ❤️
+]]
+})
+
+HomeTab:Image({
+    Title = "AMT Logo",
+    Desc = "Official AMT Image",
+    Image = "rbxassetid://79085353679807"
+})
+
+--------------------------------------------------
+-- MESSAGE
+--------------------------------------------------
+
+local MainTab = Window:Tab({
+    Title = "Message",
+    Icon = "message-circle"
+})
+
+local Message = ""
+
+MainTab:Input({
+    Title = "Write Message",
+    Placeholder = "Type here...",
+    Callback = function(text)
+        Message = text
+    end
+})
+
+MainTab:Button({
+    Title = "Send Message 🚀",
+    Desc = "Send Discord Message",
+    Callback = function()
+
+        if Message == "" then
+            WindUI:Notify({
+                Title = "Error",
+                Content = "Write a message first",
+                Duration = 3
+            })
+            return
+        end
+
+        local request = (syn and syn.request)
+            or (http and http.request)
+            or http_request
+            or request
+
+        local success, err = pcall(function()
+            request({
+                Url = WebhookURL,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+
+                Body = game:GetService("HttpService"):JSONEncode({
+
+                    ["content"] = "@everyone",
+
+                    ["username"] = "AMT",
+
+                    ["embeds"] = {{
+                        ["title"] = "🔴 AMT Store",
+                        ["description"] = Message,
+                        ["color"] = 16711680,
+
+                        ["footer"] = {
+                            ["text"] = "Sent by AMT"
+                        }
+                    }}
+                })
+            })
+        end)
+
+        if success then
+            WindUI:Notify({
+                Title = "Success",
+                Content = "Message sent successfully 🔥",
+                Duration = 4
+            })
+        else
+            WindUI:Notify({
+                Title = "Failed",
+                Content = tostring(err),
+                Duration = 4
+            })
+        end
+    end
+})
+
+--------------------------------------------------
+-- SETTINGS
+--------------------------------------------------
+
+local SettingsTab = Window:Tab({
+    Title = "Settings",
+    Icon = "settings"
+})
+
+SettingsTab:Button({
+    Title = "AMT Info",
+    Desc = "Developer Message",
+    Callback = function()
+        WindUI:Notify({
+            Title = "AMT",
+            Content = "Welcome to AMT Hub - Premium Red Edition 🔴",
+            Duration = 6
+        })
+    end
+})
+
+SettingsTab:Toggle({
+    Title = "Red Theme",
+    Default = true,
+    Callback = function(state)
+        print("Theme:", state)
+    end
+})
+
+--------------------------------------------------
+
+WindUI:Notify({
+    Title = "AMT Hub",
+    Content = "System Loaded Successfully 🔥",
+    Duration = 5
+})
